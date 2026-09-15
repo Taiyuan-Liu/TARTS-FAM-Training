@@ -1,0 +1,28 @@
+dataset_root: ../../step02_training_data_npz_preprocessing/output/dataset
+wave_checkpoint: ../output/01_wavenet/model.pt
+output_dir: ../output/02_aggregator
+model:
+  d_model: 32
+  nhead: 4
+  num_layers: 6
+  dim_feedforward: 32
+  max_seq_length: 200
+  num_zernikes: 25
+device: cuda
+precision: fp32
+fused_adamw: true
+wave_precision: bf16
+wave_batch_size: 128
+torch_threads: 8
+seed: 42017
+epochs: 1000
+batch_size: 32
+require_both_sides: true
+lr: 0.0001
+warmup_epochs: 0
+weight_decay: 0.00001
+gradient_clip: 1.0
+early_stop_patience: 1000
+lr_patience: 6
+lr_factor: 0.5
+min_lr: 0.0000001

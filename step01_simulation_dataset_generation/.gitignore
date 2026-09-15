@@ -1,0 +1,14 @@
+output/
+__pycache__/
+*.py[cod]
+*.fits
+*.fits.*
+*.npy
+*.npz
+*.hdf
+*.log
+*.pt
+*.pth
+.env
+*client_secret*
+token.json

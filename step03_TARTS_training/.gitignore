@@ -1,0 +1,14 @@
+output/**/cache
+output/**/*.npy
+output/**/*.parquet
+inputs/real_fam/shards
+inputs/real_fam/visits
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.pt
+*.ckpt
+*.npz
+*.log
+!output/**/train.log

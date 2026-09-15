@@ -1,0 +1,13 @@
+output/**/inputs
+output/**/cache
+output/**/*.npz
+output/**/*.npy
+output/**/*.parquet
+output/**/*.pkl
+output/**/*.fits
+output/**/*.fits.*
+miw_analysis/aos_source/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.log

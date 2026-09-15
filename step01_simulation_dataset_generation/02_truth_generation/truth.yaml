@@ -1,0 +1,52 @@
+# CCD-center optical truth. State values are filled from states.csv.
+modules: [imsim, astropy.time, astropy]
+
+eval_variables:
+  cboresight: {type: RADec, ra: 0 deg, dec: 0 deg}
+  sband: i
+  aaltitude: >-
+    $astropy.coordinates.SkyCoord( boresight.ra.deg*astropy.units.deg, boresight.dec.deg*astropy.units.deg ).transform_to( astropy.coordinates.AltAz( location=astropy.coordinates.EarthLocation.of_site("Cerro Pachon"), obstime=astropy.time.Time(mjd, format='mjd') ) ).alt.deg * galsim.degrees
+  aazimuth: >-
+    $astropy.coordinates.SkyCoord( boresight.ra.deg*astropy.units.deg, boresight.dec.deg*astropy.units.deg ).transform_to( astropy.coordinates.AltAz( location=astropy.coordinates.EarthLocation.of_site("Cerro Pachon"), obstime=astropy.time.Time(mjd, format='mjd') ) ).az.deg * galsim.degrees
+  azenith: 0 deg
+  fairmass: $1./np.cos(zenith)
+  artp: 0 deg
+  fexptime: 15.0
+  fmjd: 0.0
+  iseqnum: 0
+  sobsid: $f"IM_P_{astropy.time.Time(mjd, format='mjd').strftime('%Y%m%d')}_{seqnum:06d}"
+  frawSeeing: 0.0
+  ldofs: []
+
+input:
+  telescope:
+    file_name: LSST_i.yaml
+    rotTelPos: $rtp
+    fea:
+      fea_dir: /sdf/data/rubin/user/liuty/TARTS/ai_exploring/work/imsim/batoid_rubin_data/fea_legacy
+      bend_dir: /sdf/data/rubin/user/liuty/TARTS/ai_exploring/work/imsim/batoid_rubin_data/bend
+      m1m3_gravity: {zenith: $zenith}
+      m1m3_temperature: {m1m3_TBulk: 0.1, m1m3_TxGrad: 0.01, m1m3_TyGrad: 0.01, m1m3_TzGrad: 0.01, m1m3_TrGrad: 0.01}
+      m1m3_lut: {zenith: $zenith, error: 0.005, seed: 11}
+      m2_gravity: {zenith: $zenith}
+      m2_temperature: {m2_TzGrad: 0.01, m2_TrGrad: 0.01}
+      camera_gravity: {zenith: $zenith, rotation: $rtp}
+      camera_temperature: {camera_TBulk: 0.1}
+      aos_dof: {dof: $dofs}
+
+image:
+  bandpass:
+    file_name: {type: FormattedStr, format: 'LSST_%s.dat', items: [$band]}
+    wave_type: nm
+
+output:
+  dir: .
+  opd:
+    file_name: opd.fits
+    fields: []
+    eps: 0.61
+    jmax: 28
+    nx: 255
+    projection: gnomonic
+    rotTelPos: $rtp
+    wavelength: $(@image.bandpass).effective_wavelength

@@ -1,0 +1,9 @@
+[submodule "step04_analysis/external_repo/ts_ofc"]
+	path = step04_analysis/external_repo/ts_ofc
+	url = https://github.com/lsst-ts/ts_ofc.git
+[submodule "step04_analysis/external_repo/ts_intrinsic_wavefront"]
+	path = step04_analysis/external_repo/ts_intrinsic_wavefront
+	url = https://github.com/lsst-ts/ts_intrinsic_wavefront.git
+[submodule "step04_analysis/external_repo/rubin-work"]
+	path = step04_analysis/external_repo/rubin-work
+	url = https://github.com/aaronroodman/rubin-work.git

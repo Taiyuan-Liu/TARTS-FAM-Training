@@ -1,0 +1,7 @@
+torch>=2.7
+torchvision>=0.22
+timm==1.0.20
+numpy>=2.2
+PyYAML>=6
+matplotlib>=3.9
+pandas>=2.2

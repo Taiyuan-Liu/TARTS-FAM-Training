@@ -1,104 +1,117 @@
-# TARTS
+# TARTS for Full Array Mode
 
-TARTS stands for (T)riple-stage (A)lignment and (R)econstruction using (T)ransformer (S)ystems for Active Optics. It is a modular PyTorch/PyTorch Lightning package for estimating Zernike wavefront coefficients from LSST defocused images. The triple-stage design consists of: (1) AlignNet for donut alignment/centering and field metadata normalization, (2) WaveNet for per-donut Zernike regression, and (3) AggregatorNet (transformer-based) for sequence-level fusion of multiple donut predictions. The package includes utilities (`tarts.utils`), datasets/dataloaders, and the high-level `NeuralActiveOpticsSys` orchestrator. Core configuration (e.g., `noll_zk`, crop size, sequence length) is provided in `TARTS/python/tarts/dataset_params.yaml`.
+An end-to-end Rubin Full Array Mode (FAM) workflow based on
+[PetchMa/TARTS](https://github.com/PetchMa/TARTS): simulate defocused CCDs,
+prepare donut images and Zernike labels, train WaveNet and Aggregator, and
+compare real-data predictions with Danish and measured intrinsic wavefronts
+(MIW).
 
-## Features
+## Workflow
 
-- Triple-stage active optics pipeline:
-  - AlignNet: robust donut centering and field metadata normalization
-  - WaveNet: per-donut Zernike regression with CNN feature extractor
-  - AggregatorNet: transformer-based fusion across multiple donuts
-- Utilities for Zernike conversion, plotting, cropping, SNR filtering, and dataset helpers
-- PyTorch Lightning modules for training, validation, and inference
-- YAML-configurable parameters (`dataset_params.yaml`)
+| Step | What it does |
+| --- | --- |
+| [01 — Simulation](step01_simulation_dataset_generation/README.md) | Select telescope states and CCDs; calculate no-FAM optical truth; render intra/extra CCD images with imSim. |
+| [02 — Training data](step02_training_data_npz_preprocessing/README.md) | Amplifier raw → ISR/WEP → 200×200 stamps → CCS labels → 160×160 train/val/test NPZ shards. |
+| [03 — Training](step03_TARTS_training/README.md) | Train a single-donut WaveNet, then a CCD-level Aggregator; adapt both to unlabelled real images with DARE-GRAM. |
+| [04 — Analysis](step04_analysis/README.md) | Predict real FAM wavefronts, compare with Danish, and fit MIW spatial maps and time consistency. |
 
-## Requirements
+Training targets are CCD-center Z4–Z28 in physical CCS, in microns. The
+additional ±1.5 mm FAM imaging defocus is not included in the target.
+Step04 converts predictions to OCS for MIW analysis.
 
-- Python 3.9+
-- PyTorch, PyTorch Lightning
-- NumPy, PyYAML, matplotlib
-- (Optional, for LSST integrations) Rubin/LSST Science Pipelines
+## Setup
 
-## Installation
-
-Install only the TARTS package (recommended for library usage):
+Initialize the pinned external repositories after cloning:
 
 ```bash
-pip install -e TARTS/python
+git submodule update --init --recursive
 ```
 
-Or add the package path dynamically in your scripts:
+On USDF, Rubin/ISR/WEP/Butler commands use:
 
-```python
-import sys
-from pathlib import Path
-repo_root = Path(__file__).resolve().parents[2]
-sys.path.append(str(repo_root / 'TARTS' / 'python'))
+```bash
+source /sdf/home/l/liuty/rubin-user/.venv/setup.sh
 ```
 
-## Configuration
+Training and inference also need the PyTorch environment described in
+[Step03](step03_TARTS_training/README.md#train). imSim optical assets and Gaia
+access are described in [Step01](step01_simulation_dataset_generation/README.md#environment-on-usdf).
+MIW's upstream setup/build commands are in
+[Step04](step04_analysis/README.md#upstream-dependencies).
+Submit compute jobs with an explicit Rubin account, partition and QOS.
 
-Project parameters are centralized in:
+## Checkpoints
 
+[Download the four checkpoints from Google Drive](https://drive.google.com/drive/folders/1zehpesCujCeXMM4irpptTeNQoBTll3ev).
+The folder and files are shared read-only with anyone who has the link.
+This is the September 15, 2026 model set, approximately 330.5 MiB in total.
+
+Download each file and place it at the following path relative to
+`step03_TARTS_training/output/`, renaming it to `model.pt`:
+
+| Model | Download | Destination | Selected epoch |
+| --- | --- | --- | ---: |
+| Supervised WaveNet | [wavenet.pt](https://drive.google.com/file/d/1HMWwXNDn_a84hG0QxuqMIf38ZoWOeDsV/view) | `01_wavenet/model.pt` | 10 |
+| Supervised Aggregator | [aggregator.pt](https://drive.google.com/file/d/1SYWrwIITUppUd3w-PAkqFBhtq_Usd8_X/view) | `02_aggregator/model.pt` | 114 |
+| DARE WaveNet | [dare_wavenet.pt](https://drive.google.com/file/d/1VHctjXzJv9d4GW3pvV4GUgDK7HrhaBhZ/view) | `03_dare_gram/wavenet/model.pt` | 12 |
+| DARE Aggregator | [dare_aggregator.pt](https://drive.google.com/file/d/1BqD6pRNgypMESOlnsPI9gR8QESkyINuT/view) | `03_dare_gram/aggregator/model.pt` | 87 |
+
+Use the supervised pair together, or the DARE pair together. These are
+inference checkpoints, not optimizer/resume checkpoints. Their paths are
+already configured in [Step04](step04_analysis/config.yaml).
+
+## Training results
+
+Each stage's `output/` contains its resolved `config.yaml`, `history.csv`,
+`train.log` and self-contained HTML report. Download/open the HTML locally
+to view its plots.
+
+| Model | Report | Test points | Coefficient RMSE [µm] |
+| --- | --- | ---: | ---: |
+| WaveNet | [Training and test](step03_TARTS_training/output/01_wavenet/report.html) | 54,313 stamps | 0.12148 |
+| Aggregator | [Training and test](step03_TARTS_training/output/02_aggregator/report.html) | 1,938 CCD groups | 0.16946 |
+| DARE WaveNet | [Training and test](step03_TARTS_training/output/03_dare_gram/wavenet/report.html) | 54,313 stamps | 0.11759 |
+| DARE Aggregator | [Training and test](step03_TARTS_training/output/03_dare_gram/aggregator/report.html) | 1,938 CCD groups | 0.16871 |
+
+WaveNet and Aggregator rows use different evaluation units. These are
+simulation-test results, not a measurement of accuracy on real data.
+
+## Existing data on USDF
+
+Datasets remain on USDF; they are not uploaded to GitHub or Google Drive.
+The existing checkout exposes them through these output directories:
+
+| Data | USDF path |
+| --- | --- |
+| Selected states and CCDs | `/sdf/data/rubin/user/liuty/TARTS/TARTS-FAM-Training/step01_simulation_dataset_generation/output/selection` |
+| Simulated CCD images and no-FAM truth | `/sdf/data/rubin/user/liuty/TARTS/TARTS-FAM-Training/step01_simulation_dataset_generation/output/states` |
+| 200×200 WEP stamps and metadata | `/sdf/data/rubin/user/liuty/TARTS/TARTS-FAM-Training/step02_training_data_npz_preprocessing/output/stamps` |
+| Per-stamp labels | `/sdf/data/rubin/user/liuty/TARTS/TARTS-FAM-Training/step02_training_data_npz_preprocessing/output/labels` |
+| Train/val/test NPZ shards and splits | `/sdf/data/rubin/user/liuty/TARTS/TARTS-FAM-Training/step02_training_data_npz_preprocessing/output/dataset` |
+
+The training dataset contains 524,206 stamps in 1,026 NPZ shards. The split
+is fixed by [splits.csv](step02_training_data_npz_preprocessing/03_make_npz/splits.csv).
+Most data entries above are links to the published products in shared storage.
+They are local access paths, not directories included in a Git clone.
+
+Real FAM inputs used by Step03 and Step04 are available at:
+
+```text
+/sdf/data/rubin/user/liuty/TARTS/TARTS-FAM-Training/step03_TARTS_training/inputs/real_fam/shards
+/sdf/data/rubin/user/liuty/TARTS/TARTS-FAM-Training/step03_TARTS_training/inputs/real_fam/visits
 ```
-TARTS/python/tarts/dataset_params.yaml
-```
 
-Common entries include:
-- `noll_zk`: list of Noll indices used by downstream pipelines
-- `CROP_SIZE`, `max_seq_len`, `deg_per_pix`, `mm_pix`, `alpha`
-- AggregatorNet configuration under `aggregator_model`
+The per-step READMEs explain how to reuse these locations in another USDF
+checkout. Access requires the corresponding USDF filesystem permissions;
+the model downloads do not grant access to the data or Butler collection.
 
-Load safely in Python:
+## Sources
 
-```python
-from tarts.utils import safe_yaml_load
-params = safe_yaml_load('TARTS/python/tarts/dataset_params.yaml')
-noll_zk = params['noll_zk']
-```
-
-## Modules
-
-- `tarts.utils`
-  - Zernike conversions: `convert_zernikes`, `convert_zernikes_deploy`
-  - Image helpers: `batched_crop`, `get_centers`, `single_conv`, `filter_SNR`
-  - Misc: `count_parameters`, `printOnce`, `safe_yaml_load`
-- `tarts.dataloader`
-  - `Donuts` and `Donuts_Fullframe` datasets for simulations/ImSim-style data
-  - Collate function `zk_collate_fn` for batching sequences
-- `tarts.lightning_alignnet`
-  - `AlignNetSystem` and `DonutLoader` Lightning modules
-- `tarts.lightning_wavenet`
-  - `WaveNetSystem`, `DonutLoader`, and `DonutLoader_Fullframe`
-- `tarts.NeuralActiveOpticsSys`
-  - High-level orchestrator that wires AlignNet, WaveNet, and AggregatorNet for inference
-
-## Minimal usage (NeuralActiveOpticsSys)
-
-Production and RA-style runs should pass **checkpoint paths** so WaveNet and AlignNet weights come from disk only (no Hugging Face Hub or internet):
-
-```python
-from tarts.NeuralActiveOpticsSys import NeuralActiveOpticsSys
-
-model = NeuralActiveOpticsSys(
-    dataset_params="TARTS/python/tarts/dataset_params.yaml",
-    wavenet_path="/path/to/wavenet.ckpt",
-    alignet_path="/path/to/alignnet.ckpt",
-    aggregatornet_path="/path/to/aggregator.ckpt",  # optional if aggregator_on=False
-)
-```
-
-For local experiments without checkpoints, `NeuralActiveOpticsSys` defaults `pretrained=False` so timm/torchvision **does not** download ImageNet backbones at import time. Set `pretrained=True` only when you want those downloads (needs network and a writable Hugging Face cache).
-
-### Hugging Face cache / offline hosts
-
-Backbone downloads (when `pretrained=True`) use the Hugging Face Hub cache. Set **`HF_HOME`** to a writable directory (or **`TARTS_HF_HOME`**, which sets `HF_HOME` if it is not already set) **before** `import tarts` if `HOME` is not writable or points at a non-existent path. For air-gapped use, pre-populate that cache (or bake it into the image) and set **`HF_HUB_OFFLINE=1`**.
-
-## Notes
-
-- When integrating with Rubin/LSST data, ensure the LSST science stack is available; this package itself does not enforce LSST dependencies by default.
-- For training with your own data, adapt the datasets under `tarts.dataloader` and keep `noll_zk` consistent across stages.
-
-## License
-
-TBD.
+- Network cores and DARE-GRAM are adapted from
+  [PetchMa/TARTS](https://github.com/PetchMa/TARTS/tree/9ed6d0351100863bef8057a7a980ea875d17d51f).
+  Its MIT copyright/license is retained in
+  [Step03/LICENSE](step03_TARTS_training/LICENSE).
+- MIW/OFC and Aaron Roodman's time-analysis code are referenced through
+  [three pinned upstream submodules](.gitmodules). Their source and license
+  information remain in their upstream repositories; `rubin-work` does not
+  contain an explicit license at the pinned revision.

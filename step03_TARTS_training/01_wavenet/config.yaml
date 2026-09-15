@@ -1,0 +1,23 @@
+dataset_root: ../../step02_training_data_npz_preprocessing/output/dataset
+output_dir: ../output/01_wavenet
+model:
+  cnn_model: resnet101
+  n_predictor_layers: [256, 205, 69]
+  n_zernikes: 25
+device: cuda
+precision: bf16
+channels_last: true
+fused_adamw: true
+cudnn_benchmark: true
+torch_threads: 8
+seed: 42017
+epochs: 300
+batch_size: 128
+lr: 0.0003
+warmup_epochs: 2
+weight_decay: 0.00001
+gradient_clip: 1.0
+early_stop_patience: 1000
+lr_patience: 5
+lr_factor: 0.5
+min_lr: 0.0000001

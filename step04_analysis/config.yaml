@@ -1,0 +1,23 @@
+models:
+  supervised:
+    wavenet: ../step03_TARTS_training/output/01_wavenet/model.pt
+    aggregator: ../step03_TARTS_training/output/02_aggregator/model.pt
+  dare:
+    wavenet: ../step03_TARTS_training/output/03_dare_gram/wavenet/model.pt
+    aggregator: ../step03_TARTS_training/output/03_dare_gram/aggregator/model.pt
+visits_file: ../step03_TARTS_training/inputs/real_fam/heldout_visits.csv
+packages_dir: ../step03_TARTS_training/inputs/real_fam/visits
+aos_source_dir: miw_analysis/aos_source
+output_root: output
+device: cuda
+batch_size: 128
+torch_threads: 8
+butler:
+  repo: /sdf/group/rubin/repo/main
+  source_collection: LSSTCam/runs/aos/fam/danish_1_2_0_alpha0/wep_17_6_1/dv_4_5_0/bin_x2/paired/refitWcs
+miw:
+  normalization_file: miw_analysis/calibration/ofc_normalization.yaml
+  height_map_dir: miw_analysis/calibration
+  observations_file: miw_analysis/observations.csv
+  time_blocks_file: miw_analysis/time_consistency/blocks.json
+  reference_file: miw_analysis/time_consistency/reference_visits.json

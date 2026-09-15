@@ -1,0 +1,8 @@
+-r ../step03_TARTS_training/requirements.txt
+pyarrow>=18
+scipy>=1.14
+astropy
+galsim
+statsmodels
+scikit-learn
+tqdm

@@ -1,0 +1,139 @@
+# FAM image model. State, detector and exposure values are filled at runtime.
+modules: [imsim, astropy.time, astropy]
+
+eval_variables:
+  cboresight: {type: RADec, ra: 0 deg, dec: 0 deg}
+  sband: i
+  aaltitude: >-
+    $astropy.coordinates.SkyCoord( boresight.ra.deg*astropy.units.deg, boresight.dec.deg*astropy.units.deg ).transform_to( astropy.coordinates.AltAz( location=astropy.coordinates.EarthLocation.of_site("Cerro Pachon"), obstime=astropy.time.Time(mjd, format='mjd') ) ).alt.deg * galsim.degrees
+  aazimuth: >-
+    $astropy.coordinates.SkyCoord( boresight.ra.deg*astropy.units.deg, boresight.dec.deg*astropy.units.deg ).transform_to( astropy.coordinates.AltAz( location=astropy.coordinates.EarthLocation.of_site("Cerro Pachon"), obstime=astropy.time.Time(mjd, format='mjd') ) ).az.deg * galsim.degrees
+  azenith: 0 deg
+  fairmass: $1./np.cos(zenith)
+  artp: 0 deg
+  fexptime: 15.0
+  fmjd: 0.0
+  iseqnum: 0
+  sobsid: $f"IM_P_{astropy.time.Time(mjd, format='mjd').strftime('%Y%m%d')}_{seqnum:06d}"
+  frawSeeing: 0.0
+  ldofs: []
+
+input:
+  vignetting: {file_name: LSSTCam_vignetting_data.json}
+  tree_rings:
+    file_name: /sdf/data/rubin/user/liuty/TARTS/ai_exploring/work/imsim_fullframe/upstream_metadata/tree_ring_parameters_2026-02-11.txt
+  sky_catalog:
+    file_name: sky_catalog.yaml
+    obj_types: [gaia_star]
+    band: $band
+    mjd: $mjd
+    max_flux: 1.e8
+    approx_nobjects: 400
+  atm_psf:
+    airmass: $airmass
+    rawSeeing: $rawSeeing
+    band: $band
+    boresight: $boresight
+    exptime: $exptime
+    screen_size: 819.2
+    screen_scale: 0.1
+    nproc: 8
+  telescope:
+    file_name: LSST_i.yaml
+    rotTelPos: $rtp
+    focusZ: -0.0015
+    fea:
+      fea_dir: /sdf/data/rubin/user/liuty/TARTS/ai_exploring/work/imsim/batoid_rubin_data/fea_legacy
+      bend_dir: /sdf/data/rubin/user/liuty/TARTS/ai_exploring/work/imsim/batoid_rubin_data/bend
+      m1m3_gravity: {zenith: $zenith}
+      m1m3_temperature: {m1m3_TBulk: 0.1, m1m3_TxGrad: 0.01, m1m3_TyGrad: 0.01, m1m3_TzGrad: 0.01, m1m3_TrGrad: 0.01}
+      m1m3_lut: {zenith: $zenith, error: 0.005, seed: 11}
+      m2_gravity: {zenith: $zenith}
+      m2_temperature: {m2_TzGrad: 0.01, m2_TrGrad: 0.01}
+      camera_gravity: {zenith: $zenith, rotation: $rtp}
+      camera_temperature: {camera_TBulk: 0.1}
+      aos_dof: {dof: $dofs}
+  sky_model: {exptime: $exptime, mjd: $mjd}
+
+image:
+  type: LSST_Image
+  camera: '@output.camera'
+  det_name: $det_name
+  bandpass:
+    file_name: {type: FormattedStr, format: 'LSST_%s.dat', items: [$band]}
+    wave_type: nm
+  stamp_size: 500
+  wcs:
+    type: Batoid
+    camera: '@output.camera'
+    boresight: $boresight
+    obstime: $astropy.time.Time(mjd, format='mjd')
+    det_name: $det_name
+  noise: {type: CCD, gain: 1, read_noise: 0}
+  random_seed: $57721+seqnum
+  sky_level: {type: SkyLevel}
+  apply_sky_gradient: true
+  sensor:
+    type: Silicon
+    strength: 1.0
+    index_key: image_num
+    treering_center: {type: TreeRingCenter, det_name: $det_name}
+    treering_func: {type: TreeRingFunc, det_name: $det_name}
+
+gal: {type: SkyCatObj}
+psf: {type: AtmosphericPSF}
+
+stamp:
+  type: LSST_Silicon
+  draw_method: phot
+  det_name: $det_name
+  diffraction_fft: {exptime: $exptime, azimuth: $azimuth, altitude: $altitude, rotTelPos: $rtp}
+  airmass: $airmass
+  rawSeeing: $rawSeeing
+  band: $band
+  photon_ops:
+    - {type: PupilAnnulusSampler, R_inner: 2.5, R_outer: 4.18}
+    - {type: TimeSampler}
+    - type: RubinDiffractionOptics
+      camera: '@output.camera'
+      boresight: $boresight
+      det_name: $det_name
+      altitude: $altitude
+      azimuth: $azimuth
+  world_pos: {type: SkyCatWorldPos}
+  size: 300
+
+output:
+  type: LSST_CCD
+  timeout: 1e6
+  camera: LsstCamSim
+  cosmic_ray_rate: 0.0
+  det_num: {type: List, items: []}
+  dir: .
+  exptime: $exptime
+  file_name:
+    type: FormattedStr
+    format: raw_%s-%1d-%s-%s-det%03d.fits.fz
+    items: [$obsid, 0, $band, $det_name, '@output.det_num']
+  header:
+    mjd-obs: $mjd
+    mjd: $mjd+17/86400.0
+    seqnum: $seqnum
+    band: $band
+    fieldRA: $boresight.ra.deg
+    fieldDec: $boresight.dec.deg
+    rotTelPos: $rtp.deg
+    airmass: $airmass
+    runnum: 1
+  nfiles: 0
+  nproc: 1
+  readout:
+    bias_level: 1000.0
+    dark_current: 0.02
+    file_name:
+      type: FormattedStr
+      format: amp_%s-%1d-%s-%s-det%03d.fits.fz
+      items: [$obsid, 0, $band, $det_name, '@output.det_num']
+    pcti: 1.e-6
+    readout_time: 3.0
+    scti: 1.e-6

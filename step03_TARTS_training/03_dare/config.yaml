@@ -1,0 +1,28 @@
+wavenet_config: ../01_wavenet/config.yaml
+aggregator_config: ../02_aggregator/config.yaml
+real_target_root: ../inputs/real_fam
+heldout_manifest: ../inputs/real_fam/heldout_visits.csv
+output_dir: ../output/03_dare_gram
+wavenet:
+  epochs: 300
+  stamps_per_ccd: 8
+  lr: 0.00002
+  backbone_lr: 0.000002
+  warmup_epochs: 0
+  early_stop_patience: 1000
+  lr_patience: 3
+aggregator:
+  epochs: 1000
+  lr: 0.00002
+  warmup_epochs: 0
+  early_stop_patience: 1000
+  lr_patience: 5
+dare:
+  weight: 1.0
+  source_guard_fraction: 0.05
+  selection_weight: 1.0
+  validation_batches: 407
+  loss:
+    threshold: 0.9
+    tradeoff_angle: 0.05
+    tradeoff_scale: 0.001

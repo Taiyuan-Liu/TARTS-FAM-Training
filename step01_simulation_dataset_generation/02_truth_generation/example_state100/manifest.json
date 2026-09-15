@@ -1,0 +1,399 @@
+{
+  "author_config": {
+    "path": "/sdf/data/rubin/shared/aos_group/final_imsim_simulation/perturbation_25/25.yaml",
+    "sha256": "d50a9bfda19b9c7573425eb99625fa7546f5f7a125deb9f6fd4377d803c5fc5f"
+  },
+  "created_utc": "2026-08-22T08:46:59.769864+00:00",
+  "inputs": {
+    "bend": {
+      "file_count": 14,
+      "manifest_sha256": "d81e7971bcf431b20561ca1ba9d5a72c17bb6ea080bb6bf3029884a0c2854aae",
+      "path": "/sdf/data/rubin/user/liuty/TARTS/ai_exploring/work/imsim/batoid_rubin_data/bend",
+      "total_bytes": 71136247
+    },
+    "fea": {
+      "file_count": 24,
+      "manifest_sha256": "cbac60f76074506a55ffbd27ef9cf1d800ac8be31c8e55a574db96ea02ae82b3",
+      "path": "/sdf/data/rubin/user/liuty/TARTS/ai_exploring/work/imsim/batoid_rubin_data/fea_legacy",
+      "total_bytes": 33355393
+    },
+    "nominal_telescope_file": "LSST_i.yaml"
+  },
+  "outputs": {
+    "detector_fields.csv": {
+      "bytes": 2614,
+      "sha256": "17e84f776bfae3664ad444eb7cedf78c965058e04025bc6846b9eb658f878d85"
+    },
+    "opd_base_021_detectors_center.fits": {
+      "bytes": 11125440,
+      "sha256": "bf1691e8e87ebef442de83133243a9e6d12c42ac759688d6962c53ce267f2482"
+    },
+    "zk_true.npy": {
+      "bytes": 2228,
+      "dtype": "float32",
+      "raw_array_sha256": "d806d7108a0fe5b5a3e2802cdd7228494c6ac34ddbc22bba3b59fb493a1eb7a6",
+      "sha256": "d658a59c219f4b6fcea430c84136008e58d0e1d41efb9b6c5d39bfb9fa82b798",
+      "shape": [
+        21,
+        25
+      ]
+    }
+  },
+  "physics": {
+    "aos_dof_count": 50,
+    "base_telescope_state_hash_algorithm": "sha256_of_raw_overridden_telescope_without_focusZ_before_ProcessInput_plus_author_config_fea_bend_imsim",
+    "base_telescope_state_sha256": "25c36f9f3f34d0521072dc2d973b42f4eca093557adf596577a239b94768235b",
+    "effective_wavelength_nm": 754.5970960476473,
+    "fam_excluded_from_label": true,
+    "image_focus_header_mm": -1.5,
+    "image_focus_m": -0.0015,
+    "label_focus_m": 0.0,
+    "main_image_built": false,
+    "opd_rotTelPos_deg": 36.376558,
+    "opd_rotTelPos_source": "author output.opd.rotTelPos",
+    "removed_input_telescope_focusZ": null
+  },
+  "purpose": "detector-linked no-FAM TARTS supervision truth",
+  "reference_gate": {
+    "fit_noll": [
+      1,
+      28
+    ],
+    "input_units": "nm",
+    "obscuration": 0.61,
+    "opd_path": "/sdf/data/rubin/shared/aos_group/final_imsim_simulation/perturbation_1/opd.fits",
+    "opd_sha256": "79fed7e85e2c9fd8eb99464d27a6a27fbcec76d902e7179c3c0a1abf8a53b9b3",
+    "pass": true,
+    "stored_noll": [
+      4,
+      28
+    ],
+    "stored_units": "um",
+    "truth_c_order_raw_array_sha256": "de92bb5ba4bd6f71ff9c39716f6d524f12e73013c6f54957bba59b22ad7463c5",
+    "truth_dtype": "float32",
+    "truth_shape": [
+      4,
+      25
+    ]
+  },
+  "selection": {
+    "camera": "LsstCamSim",
+    "detector_ids": [
+      0,
+      14,
+      25,
+      32,
+      43,
+      46,
+      56,
+      64,
+      73,
+      88,
+      92,
+      104,
+      113,
+      124,
+      131,
+      140,
+      144,
+      161,
+      169,
+      178,
+      184
+    ],
+    "detectors": [
+      {
+        "camera_height_mm": 0.0,
+        "detector_id": 0,
+        "detector_name": "R01_S00",
+        "detector_type": "DetectorType.SCIENCE",
+        "field_inversion_residual_mm": 6.355287432313019e-14,
+        "field_x_deg": -1.6444502976466717,
+        "field_y_deg": -0.939511433807047,
+        "focal_x_mm": -169.26000000000002,
+        "focal_y_mm": -296.26,
+        "opd_hdu": 0
+      },
+      {
+        "camera_height_mm": 0.0,
+        "detector_id": 14,
+        "detector_name": "R02_S12",
+        "detector_type": "DetectorType.SCIENCE",
+        "field_inversion_residual_mm": 6.99803436660041e-14,
+        "field_x_deg": -1.410557392762324,
+        "field_y_deg": 0.23456534888500702,
+        "focal_x_mm": 42.239999999999995,
+        "focal_y_mm": -254.01,
+        "opd_hdu": 1
+      },
+      {
+        "camera_height_mm": 0.0,
+        "detector_id": 25,
+        "detector_name": "R03_S21",
+        "detector_type": "DetectorType.SCIENCE",
+        "field_inversion_residual_mm": 2.0495186137532011e-13,
+        "field_x_deg": -1.1759912166350723,
+        "field_y_deg": 0.7052282045735162,
+        "focal_x_mm": 126.99,
+        "focal_y_mm": -211.76,
+        "opd_hdu": 2
+      },
+      {
+        "camera_height_mm": 0.0,
+        "detector_id": 32,
+        "detector_name": "R10_S12",
+        "detector_type": "DetectorType.SCIENCE",
+        "field_inversion_residual_mm": 1.4210854715202004e-13,
+        "field_x_deg": -0.7053392416840262,
+        "field_y_deg": -1.1759911646249057,
+        "focal_x_mm": -211.76000000000002,
+        "focal_y_mm": -127.00999999999999,
+        "opd_hdu": 3
+      },
+      {
+        "camera_height_mm": 0.0,
+        "detector_id": 43,
+        "detector_name": "R11_S21",
+        "detector_type": "DetectorType.SCIENCE",
+        "field_inversion_residual_mm": 1.2710574864626038e-13,
+        "field_x_deg": -0.47080489991001123,
+        "field_y_deg": -0.705512947357775,
+        "focal_x_mm": -127.0,
+        "focal_y_mm": -84.75,
+        "opd_hdu": 4
+      },
+      {
+        "camera_height_mm": 0.0,
+        "detector_id": 46,
+        "detector_name": "R12_S01",
+        "detector_type": "DetectorType.SCIENCE",
+        "field_inversion_residual_mm": 5.684341886080802e-14,
+        "field_x_deg": -0.9401780528634613,
+        "field_y_deg": 0.0,
+        "focal_x_mm": 0.0,
+        "focal_y_mm": -169.25,
+        "opd_hdu": 5
+      },
+      {
+        "camera_height_mm": 0.0,
+        "detector_id": 56,
+        "detector_name": "R13_S02",
+        "detector_type": "DetectorType.SCIENCE",
+        "field_inversion_residual_mm": 1.6077746776921858e-13,
+        "field_x_deg": -0.9399456018178866,
+        "field_y_deg": 0.9399456018178866,
+        "focal_x_mm": 169.25,
+        "focal_y_mm": -169.25,
+        "opd_hdu": 6
+      },
+      {
+        "camera_height_mm": 0.0,
+        "detector_id": 64,
+        "detector_name": "R14_S01",
+        "detector_type": "DetectorType.SCIENCE",
+        "field_inversion_residual_mm": 1.4210854715202004e-13,
+        "field_x_deg": -0.9396501291140387,
+        "field_y_deg": 1.4101691745640519,
+        "focal_x_mm": 254.0,
+        "focal_y_mm": -169.25,
+        "opd_hdu": 7
+      },
+      {
+        "camera_height_mm": 0.0,
+        "detector_id": 73,
+        "detector_name": "R20_S01",
+        "detector_type": "DetectorType.SCIENCE",
+        "field_inversion_residual_mm": 3.4466816133644055e-13,
+        "field_x_deg": -0.234676408562124,
+        "field_y_deg": -1.4105573719561075,
+        "focal_x_mm": -254.01000000000002,
+        "focal_y_mm": -42.25999999999999,
+        "opd_hdu": 8
+      },
+      {
+        "camera_height_mm": 0.0,
+        "detector_id": 88,
+        "detector_name": "R21_S21",
+        "detector_type": "DetectorType.SCIENCE",
+        "field_inversion_residual_mm": 8.644125458514252e-14,
+        "field_x_deg": 0.23471886751463047,
+        "field_y_deg": -0.7055454715824396,
+        "focal_x_mm": -127.0,
+        "focal_y_mm": 42.25,
+        "opd_hdu": 9
+      },
+      {
+        "camera_height_mm": 0.0,
+        "detector_id": 92,
+        "detector_name": "R22_S02",
+        "detector_type": "DetectorType.SCIENCE",
+        "field_inversion_residual_mm": 4.0194366942304644e-14,
+        "field_x_deg": -0.23474748953526733,
+        "field_y_deg": 0.23474748953526733,
+        "focal_x_mm": 42.25,
+        "focal_y_mm": -42.25,
+        "opd_hdu": 10
+      },
+      {
+        "camera_height_mm": 0.0,
+        "detector_id": 104,
+        "detector_name": "R23_S12",
+        "detector_type": "DetectorType.SCIENCE",
+        "field_inversion_residual_mm": 5.684341886080802e-14,
+        "field_x_deg": 0.0,
+        "field_y_deg": 0.9401780528634613,
+        "focal_x_mm": 169.25,
+        "focal_y_mm": 0.0,
+        "opd_hdu": 11
+      },
+      {
+        "camera_height_mm": 0.0,
+        "detector_id": 113,
+        "detector_name": "R24_S12",
+        "detector_type": "DetectorType.SCIENCE",
+        "field_inversion_residual_mm": 5.115907697472721e-13,
+        "field_x_deg": 0.0,
+        "field_y_deg": 1.6448130874608509,
+        "focal_x_mm": 296.25,
+        "focal_y_mm": 0.0,
+        "opd_hdu": 12
+      },
+      {
+        "camera_height_mm": 0.0,
+        "detector_id": 124,
+        "detector_name": "R30_S21",
+        "detector_type": "DetectorType.SCIENCE",
+        "field_inversion_residual_mm": 2.842170943040401e-14,
+        "field_x_deg": 0.9396501291140392,
+        "field_y_deg": -1.4101691745640523,
+        "focal_x_mm": -254.00000000000003,
+        "focal_y_mm": 169.25,
+        "opd_hdu": 13
+      },
+      {
+        "camera_height_mm": 0.0,
+        "detector_id": 131,
+        "detector_name": "R31_S12",
+        "detector_type": "DetectorType.SCIENCE",
+        "field_inversion_residual_mm": 1.2710574864626038e-13,
+        "field_x_deg": 0.705512947357775,
+        "field_y_deg": -0.47080489991001123,
+        "focal_x_mm": -84.75,
+        "focal_y_mm": 127.0,
+        "opd_hdu": 14
+      },
+      {
+        "camera_height_mm": 0.0,
+        "detector_id": 140,
+        "detector_name": "R32_S12",
+        "detector_type": "DetectorType.SCIENCE",
+        "field_inversion_residual_mm": 8.644125458514252e-14,
+        "field_x_deg": 0.7055454715824396,
+        "field_y_deg": 0.23471886751463047,
+        "focal_x_mm": 42.25,
+        "focal_y_mm": 127.0,
+        "opd_hdu": 15
+      },
+      {
+        "camera_height_mm": 0.0,
+        "detector_id": 144,
+        "detector_name": "R33_S00",
+        "detector_type": "DetectorType.SCIENCE",
+        "field_inversion_residual_mm": 1.2058310082691391e-13,
+        "field_x_deg": 0.47084084504579954,
+        "field_y_deg": 0.47084084504579954,
+        "focal_x_mm": 84.75,
+        "focal_y_mm": 84.75,
+        "opd_hdu": 16
+      },
+      {
+        "camera_height_mm": 0.0,
+        "detector_id": 161,
+        "detector_name": "R34_S22",
+        "detector_type": "DetectorType.SCIENCE",
+        "field_inversion_residual_mm": 6.355287432313019e-14,
+        "field_x_deg": 0.9394560049659044,
+        "field_y_deg": 1.644394927451398,
+        "focal_x_mm": 296.25,
+        "focal_y_mm": 169.25,
+        "opd_hdu": 17
+      },
+      {
+        "camera_height_mm": 0.0,
+        "detector_id": 169,
+        "detector_name": "R41_S21",
+        "detector_type": "DetectorType.SCIENCE",
+        "field_inversion_residual_mm": 1.797546735911271e-13,
+        "field_x_deg": 1.644522853311203,
+        "field_y_deg": -0.7050730745309743,
+        "focal_x_mm": -127.01,
+        "focal_y_mm": 296.24,
+        "opd_hdu": 18
+      },
+      {
+        "camera_height_mm": 0.0,
+        "detector_id": 178,
+        "detector_name": "R42_S21",
+        "detector_type": "DetectorType.SCIENCE",
+        "field_inversion_residual_mm": 5.684342150778591e-14,
+        "field_x_deg": 1.644757652261432,
+        "field_y_deg": -5.552111977658956e-05,
+        "focal_x_mm": -0.010000000000001563,
+        "focal_y_mm": 296.24,
+        "opd_hdu": 19
+      },
+      {
+        "camera_height_mm": 0.0,
+        "detector_id": 184,
+        "detector_name": "R43_S11",
+        "detector_type": "DetectorType.SCIENCE",
+        "field_inversion_residual_mm": 1.0247593068766006e-13,
+        "field_x_deg": 1.4102693091624081,
+        "field_y_deg": 0.7051068922813268,
+        "focal_x_mm": 126.99,
+        "focal_y_mm": 253.99,
+        "opd_hdu": 20
+      }
+    ],
+    "field_coordinate_frame": "camera_fixed_unrotated",
+    "field_policy": "ccd_center"
+  },
+  "software": {
+    "afw": "afw gd05168030c+e23c06a85c -f Linux64 -Z /sdf/group/rubin/sw/conda/envs/lsst-scipipe-12.1.0/share/eups",
+    "astropy": "7.2.0",
+    "batoid": "0.8.0",
+    "galsim": "2.7.2",
+    "hostname": "sdfrome129",
+    "imsim": {
+      "commit": "393722e04b4573fd1f87530bde800c4a1b0419d3",
+      "path": "/sdf/data/rubin/user/liuty/TARTS/ai_exploring/repositories/imSim_v2.1.1_author_candidate/imsim/__init__.py",
+      "version": "2.1.1"
+    },
+    "lsst_distrib": "lsst_distrib gdfb3db0272+cd058807f9 -f Linux64 -Z /sdf/group/rubin/sw/conda/envs/lsst-scipipe-12.1.0/share/eups",
+    "numpy": "2.3.5",
+    "obs_lsst": "obs_lsst g23cd44dc28+bf06849124 -f Linux64 -Z /sdf/group/rubin/sw/conda/envs/lsst-scipipe-12.1.0/share/eups",
+    "python": "3.13.9 | packaged by conda-forge | (main, Oct 16 2025, 10:31:39) [GCC 14.3.0]"
+  },
+  "timing_seconds": {
+    "historical_zernike_fit": 0.5800257469527423,
+    "opd_generation": 47.29732893302571,
+    "total_before_publish": 55.498993563931435
+  },
+  "truth_contract": {
+    "fit_noll": [
+      1,
+      28
+    ],
+    "header_az_is_diagnostic_only": true,
+    "input_units": "nm",
+    "mode": "historical_opd_fit",
+    "obscuration": 0.61,
+    "stored_dtype": "float32",
+    "stored_noll": [
+      4,
+      28
+    ],
+    "stored_units": "um",
+    "zernike_rotation_applied": false
+  }
+}

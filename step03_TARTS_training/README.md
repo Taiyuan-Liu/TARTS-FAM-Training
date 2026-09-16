@@ -90,19 +90,38 @@ Checkpoint download links and their destination paths are in the
 
 ## Evaluate and predict
 
-Evaluate selected models on the simulation test split:
+Evaluate each model pair on the simulation test split:
 
 ```bash
-python -B evaluate.py --kind wavenet
-python -B evaluate.py --kind aggregator
-python -B evaluate.py --kind wavenet --variant dare
-python -B evaluate.py --kind aggregator --variant dare
+python -B evaluate.py --variant supervised
+python -B evaluate.py --variant dare
 ```
 
-Each command adds test scatter plots and per-mode metrics to its stage's
-`report.html`. Use `--checkpoint` and, for Aggregator, `--wavenet` to select
-explicit inputs. Plot limits use joint 0.2–99.8% quantiles; metrics include
-all points. `--zoom-quantile 0` displays the full range.
+Each command updates the WaveNet and Aggregator `report.html` files. Use
+`--wavenet` and `--aggregator` to select explicit checkpoints. Cached WaveNet
+predictions are reused; `--device cpu` runs the remaining Aggregator inference
+on CPU when that cache is available.
+
+All comparisons use the same state/CCD groups with both defocus sides and
+all stamps in those groups, including the outer detectors. Reported methods
+are single-stamp WaveNet, its CCD mean and median, and Aggregator. Both
+coefficient RMSE [µm] and mRSSE [arcsec] use two weightings:
+
+- **CCD equal:** each state/CCD group contributes equally. For single-stamp
+  WaveNet, each stamp receives weight `1 / (stamps in its group)`; predictions
+  are not averaged before computing its errors.
+- **Stamp equal:** each stamp contributes equally. A group-level prediction
+  receives weight equal to the number of stamps in its group.
+
+Coefficient RMSE pools squared errors over the population and all 25 modes
+before taking the square root. mRSSE averages the arcsec-weighted residual
+norm. Training losses and checkpoint selection remain as described above.
+
+Scatter plots use one point per state/CCD: the WaveNet CCD mean or Aggregator
+prediction. Both reports share axes, using the joint 0.2–99.8% quantiles of
+truth and both predictions. Metrics include all points; `--zoom-quantile 0`
+displays the full range. Tables and per-mode statistics for both weightings
+are embedded in the HTML, including a `test-metrics` JSON block.
 
 `common.models.load_model(path, kind, device)` loads an inference checkpoint.
 Use the WaveNet recorded by the Aggregator's checkpoint. Outputs are CCS

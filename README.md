@@ -66,15 +66,42 @@ Each stage's `output/` contains its resolved `config.yaml`, `history.csv`,
 `train.log` and self-contained HTML report. Download/open the HTML locally
 to view its plots.
 
-| Model | Report | Test points | Coefficient RMSE [µm] |
-| --- | --- | ---: | ---: |
-| WaveNet | [Training and test](step03_TARTS_training/output/01_wavenet/report.html) | 54,313 stamps | 0.12148 |
-| Aggregator | [Training and test](step03_TARTS_training/output/02_aggregator/report.html) | 1,938 CCD groups | 0.16946 |
-| DARE WaveNet | [Training and test](step03_TARTS_training/output/03_dare_gram/wavenet/report.html) | 54,313 stamps | 0.11759 |
-| DARE Aggregator | [Training and test](step03_TARTS_training/output/03_dare_gram/aggregator/report.html) | 1,938 CCD groups | 0.16871 |
+Simulation test: **1,938 state–CCD groups, 53,888 stamps**, including outer
+detectors. Every group contains both intra and extra; all rows below use
+the same stamps and CCD-center truth, CCS Z4–Z28 in µm.
 
-WaveNet and Aggregator rows use different evaluation units. These are
-simulation-test results, not a measurement of accuracy on real data.
+CCD equal gives each state–CCD group equal weight. Stamp equal gives each
+stamp equal weight; group predictions receive weight equal to their stamp
+counts. Coefficient RMSE pools squared errors over samples and all 25 modes
+before taking the square root. See [evaluation definitions](step03_TARTS_training/README.md#evaluate-and-predict).
+
+### Supervised
+
+| Method | CCD-equal RMSE [µm] | Stamp-equal RMSE [µm] |
+| --- | ---: | ---: |
+| WaveNet single stamp | 0.183293 | 0.120678 |
+| WaveNet CCD mean | 0.172807 | 0.105394 |
+| WaveNet CCD median | 0.174158 | 0.107498 |
+| Aggregator | 0.169464 | 0.100597 |
+
+Reports: [WaveNet](step03_TARTS_training/output/01_wavenet/report.html) ·
+[Aggregator](step03_TARTS_training/output/02_aggregator/report.html).
+
+### DARE-GRAM
+
+| Method | CCD-equal RMSE [µm] | Stamp-equal RMSE [µm] |
+| --- | ---: | ---: |
+| WaveNet single stamp | 0.178564 | 0.116668 |
+| WaveNet CCD mean | 0.171297 | 0.105861 |
+| WaveNet CCD median | 0.171791 | 0.106751 |
+| Aggregator | 0.168714 | 0.101778 |
+
+Reports: [WaveNet](step03_TARTS_training/output/03_dare_gram/wavenet/report.html) ·
+[Aggregator](step03_TARTS_training/output/03_dare_gram/aggregator/report.html).
+
+Reports include mRSSE, per-mode errors and matched-axis test scatter plots.
+Each scatter point represents one state–CCD group: a WaveNet CCD mean or an
+Aggregator prediction. These tables evaluate simulation truth, not real-data accuracy.
 
 ## Real-data analysis
 

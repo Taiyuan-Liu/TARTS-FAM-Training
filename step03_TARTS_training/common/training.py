@@ -461,44 +461,6 @@ def _train(kind, config, targets, resume, out):
     return out / "model.pt"
 
 
-def evaluate_checkpoint(kind, config, index=None, precision=None, zoom_quantile=0.002, checkpoint_path=None):
-    """Add held-out simulation test metrics/plots to the owning stage's report."""
-    from .reporting import write_report
-    torch.set_num_threads(config.get("torch_threads", 8))
-    device = torch.device(config["device"])
-    out = Path(config["output_dir"])
-    checkpoint_path = Path(checkpoint_path) if checkpoint_path else out / "model.pt"
-    model, checkpoint = load_model(checkpoint_path, kind, device)
-    index = index or DatasetIndex(config["dataset_root"])
-    if checkpoint["dataset_identity"] != index.identity:
-        raise ValueError("Evaluate on the dataset recorded in the checkpoint")
-    if kind == "wavenet":
-        dataset = index.wave("test")
-    else:
-        if sha256(config["wave_checkpoint"]) != checkpoint["wave_checkpoint_sha256"]:
-            raise ValueError("Aggregator requires its matching frozen WaveNet")
-        if config["wave_precision"] != checkpoint["config"]["wave_precision"]:
-            raise ValueError("Frozen WaveNet prediction precision changed")
-        predictions = wave_predictions(index, "test", config["wave_checkpoint"], out / "cache",
-                                       device, config["wave_precision"], config["wave_batch_size"])
-        dataset = index.aggregate("test", predictions, config["require_both_sides"])
-    prediction = predict(model, dataset, kind, device, precision or config["precision"], config["batch_size"])
-    truth = dataset.arrays["truth"]
-    result = dict(split="test", model=kind, model_sha256=sha256(checkpoint_path),
-                  dataset_identity=index.identity, precision=precision or config["precision"],
-                  point="stamp" if kind == "wavenet" else "state/CCD", **CONTRACT, **metrics(prediction, truth))
-    if kind == "aggregator":
-        result["mean_baseline"] = metrics(dataset.arrays["mean"], truth)
-        result["median_baseline"] = metrics(dataset.arrays["median"], truth)
-    history = []
-    if (out / "history.csv").exists():
-        with (out / "history.csv").open(newline="") as stream:
-            history = list(csv.DictReader(stream))
-    write_report(out, kind, history, checkpoint["epoch"], result, prediction, truth, zoom_quantile)
-    print(f"Test {kind}: {result['samples']} points; RMSE={result['coefficient_rmse_um']:.6f} um", flush=True)
-    return result
-
-
 def training_cli(kind):
     parser = argparse.ArgumentParser(description=f"Train FAM {kind} from random initialization")
     parser.add_argument("--config", type=Path, default=default_config(kind))

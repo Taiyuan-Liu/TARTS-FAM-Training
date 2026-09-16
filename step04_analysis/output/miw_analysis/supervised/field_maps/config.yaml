@@ -1,0 +1,65 @@
+defaults:
+  path: A
+  filter:
+  - i
+  programs:
+  - BLOCK-T614_triplets
+  alt_min_deg: 50.0
+  alt_max_deg: 60.0
+  coord_sys: OCS
+  rotator_bins:
+  - - -65.0
+    - -55.0
+  - - -20.0
+    - -10.0
+  - - -3.0
+    - 3.0
+  - - 10.0
+    - 20.0
+  - - 55.0
+    - 65.0
+  build:
+    k_min: 1
+    k_max: 6
+    n_iter: 5
+    n_bins: 73
+    fp_radius_basis: 1.8
+    fp_radius_grid: 1.8
+    min_donuts: 100
+    bad_fit_threshold: 2.0
+    max_visits: null
+    ofc_normalization_yaml: /sdf/data/rubin/user/liuty/TARTS/TARTS-FAM-Training/step04_analysis/miw_analysis/calibration/ofc_normalization.yaml
+    height_source: batoid_rubin
+    batoid_rubin_height_map_dir: /sdf/data/rubin/user/liuty/TARTS/TARTS-FAM-Training/step04_analysis/miw_analysis/calibration
+    height_map_fits: null
+    height_to_z4_factor: 15.0
+    wfs_edge_cut_deg: 1.75
+  split:
+    rotation_sign: 1
+    spin_sign: 1
+    m_max: 12
+    degen_assignment: ocs
+    ridge: 0.001
+    hole_dist: 0.06
+    r_min: 0.06
+    r_max: 1.75
+    n_r: 80
+    n_az: 180
+    r_lim_lo: 0.1
+    r_lim_hi: 1.6
+    use_z4_optical: true
+measured_intrinsics:
+  tarts:
+  - name: pathA_50_34_i_5rot
+    n_dof: 50
+    n_keep: 34
+    split:
+      split_js:
+      - 4
+  danish:
+  - name: pathA_50_34_i_5rot
+    n_dof: 50
+    n_keep: 34
+    split:
+      split_js:
+      - 4

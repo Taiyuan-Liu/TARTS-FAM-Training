@@ -13,6 +13,8 @@ produces two groups of results:
 The simulation/training setup and simulation-test scatter on pages 69–70
 belong to Step01–03.
 
+See [Results](output/RESULTS.md) for the final figures and metric tables.
+
 ## Layout
 
 ```text
@@ -197,19 +199,30 @@ and `blocks.json`.
 python -B inference/predict.py --variant dare \
   --visits-file miw_analysis/time_consistency/visits.csv \
   --output-dir output/predictions/full_iband_dare
-python -B miw_analysis/prepare_inputs.py --variant dare --from-butler \
-  --visits-file miw_analysis/time_consistency/visits.csv \
+python -B miw_analysis/time_consistency/prepare.py \
+  --author-dir <Danish-MIW-extraction-directory> \
+  --rotation-dir <raw-AOS-rotation-records-directory> \
   --predictions-dir output/predictions/full_iband_dare \
   --output-dir output/miw_analysis/full_iband_dare/inputs
-python -B miw_analysis/time_consistency/fit.py reference \
+python -B miw_analysis/time_consistency/fit.py reference --variant dare \
   --input-dir output/miw_analysis/full_iband_dare/inputs \
   --output-dir output/miw_analysis/full_iband_dare/time_consistency
-python -B miw_analysis/time_consistency/fit.py blocks \
+python -B miw_analysis/time_consistency/fit.py blocks --variant dare \
   --input-dir output/miw_analysis/full_iband_dare/inputs \
   --output-dir output/miw_analysis/full_iband_dare/time_consistency
 python -B miw_analysis/time_consistency/compare.py --variant dare \
   --grids-dir output/miw_analysis/full_iband_dare/time_consistency
 ```
+
+The time-study preparation reads the Danish MIW extraction's
+`donuts.parquet` and per-visit `rotation_<visit>.json` records containing
+the raw AOS `rotTelPos` in radians. The sample spans several WEP collections.
+It matches Danish's selected pair identities to the current predictions,
+broadcasts each TARTS CCD vector to those pairs, and verifies the CCS→OCS
+rotation against the source Danish coefficients. Both methods start with
+identical pair positions and intrinsic terms. `pair_alignment.csv` records
+the counts and rotation check per visit. The subsequent MIW fit applies its
+own fit-quality selection to each method.
 
 Time fits use the 50/34 basis and three iterations; all 21 modes enter the
 fit, and Z5–Z8 are retained for comparison.
@@ -223,12 +236,17 @@ block membership, MJD timing and summary statistics.
 
 ```text
 output/
-  predictions/{supervised,dare}/
+  RESULTS.md                 Figure and metric index
+  predictions/{supervised,dare,full_iband_dare}/
   danish_comparison/{zernikes,donuts}/
-  miw_analysis/<variant>/
-    inputs/                  Raw/Avg AOS tables and MIW Parquet inputs
-    field_maps/              Author fit products and comparison figures
-    time_consistency/        Reference, block grids and time figures
+  miw_analysis/
+    danish/field_maps/        Shared Danish reference PDF
+    {supervised,dare}/
+      inputs/                Raw/Avg AOS tables and MIW Parquet inputs
+      field_maps/            Native PDFs, OCS/CCS figures and metrics
+    full_iband_dare/
+      inputs/                Matched time-study pairs
+      time_consistency/      Reference, block grids and time figures
 ```
 
 Fitting and plotting are separate: replotting saved products does not repeat

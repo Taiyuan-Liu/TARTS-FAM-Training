@@ -76,6 +76,12 @@ to view its plots.
 WaveNet and Aggregator rows use different evaluation units. These are
 simulation-test results, not a measurement of accuracy on real data.
 
+## Real-data analysis
+
+[Step04 results](step04_analysis/output/RESULTS.md) collect the TARTS–Danish
+coefficient comparisons, OCS/CCS spatial MIW maps and i-band time-consistency
+plots, with PNG/PDF figures and CSV metrics.
+
 ## Existing data on USDF
 
 Datasets remain on USDF; they are not uploaded to GitHub or Google Drive.

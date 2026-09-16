@@ -6,6 +6,9 @@ output/**/*.parquet
 output/**/*.pkl
 output/**/*.fits
 output/**/*.fits.*
+# Keep final figures and summary PDFs; native fit workspaces stay local.
+output/miw_analysis/*/field_maps/danish
+output/miw_analysis/*/field_maps/tarts
 miw_analysis/aos_source/
 __pycache__/
 *.py[cod]
